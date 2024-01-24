@@ -4,8 +4,7 @@ namespace Tests\Feature\Models;
 
 use App\Models\Category;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 
 class CategoryTest extends TestCase
@@ -105,7 +104,7 @@ class CategoryTest extends TestCase
     public function testUuid()
     {
         $categoryId = factory(Category::class)->create()->id;
-        $this->assertTrue(\Ramsey\Uuid\Uuid::isValid($categoryId));
+        $this->assertTrue(Uuid::isValid($categoryId));
     }
 
 }
