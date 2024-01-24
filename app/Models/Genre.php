@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Genre extends Model
 {
     use SoftDeletes,Uuid;
-
+    protected $table = 'genres';
     protected $fillable = [
         'name',
         'is_active'

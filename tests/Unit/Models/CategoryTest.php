@@ -59,7 +59,6 @@ class CategoryTest extends TestCase
 
     public function testIncrementing()
     {
-        $this->category = new Category();
         $this->assertFalse($this->category->incrementing);
     }
 

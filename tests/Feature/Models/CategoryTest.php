@@ -93,4 +93,19 @@ class CategoryTest extends TestCase
 
     }
 
+    public function testDeleteCategory()
+    {
+        $category = factory(Category::class)->create();
+
+        $category->delete();
+
+        $this->assertEmpty($category->find(['id', $category['id']])->toArray());
+    }
+
+    public function testUuid()
+    {
+        $categoryId = factory(Category::class)->create()->id;
+        $this->assertTrue(\Ramsey\Uuid\Uuid::isValid($categoryId));
+    }
+
 }
