@@ -1,6 +1,8 @@
 steps:
+  # Nome, descrição do que tu vai fazer
   - id: "Step 00 - Realizando docker-compose up"
-    name: 'docker/compose'
+    #Imagem que o CI service vai chamar, $PROJECT_ID é o project id do GCP
+    name: 'gcr.io/$PROJECT_ID/docker-compose'
     args: ['-f', 'docker-compose.cloudbuild.yaml', 'up', '-d']
 
   - id: "Step 01 - chown in /var/www"
