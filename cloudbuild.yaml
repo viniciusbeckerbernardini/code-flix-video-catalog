@@ -3,4 +3,32 @@ steps:
   - id: "Step 00 - Realizando docker-compose up"
     #Imagem que o CI service vai chamar, $PROJECT_ID é o project id do GCP
     name: 'gcr.io/$PROJECT_ID/docker-compose'
-    args: ['-f', 'docker-compose.yaml', 'up', '-d']
+    args: ['-f', 'docker-compose.prod.yaml', 'up', '-d']
+
+  - id: "Step 01 - chown in /var/www"
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['exec','-u','root','-t','app','chown','-R','www-data:www-data','/var/www']
+
+  - id: 'Step 02 - Rodando composer install'
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['exec', '-t', 'app', 'composer', 'install']
+
+  - id: 'Step 04 - Copiando .env'
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['exec', '-t', 'app', 'cp', '.env.example', '.env']
+
+  - id: 'Step 05 - Copiando .env.testing'
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['exec', '-t', 'app', 'cp', '.env.testing.example', '.env.testing']
+
+  - id: 'Step 06 - Key generate'
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['exec', '-t', 'app', 'php', '/var/www/artisan', 'key:generate']
+
+  - id: 'Step 07 - Migrations'
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['exec', '-t', 'app', 'php', '/var/www/artisan', 'migrate']
+
+  - id: 'Step 08 - Executar'
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['exec', '-t', 'app', 'php', '/var/www/vendor/bin/phpunit', '-c', '/var/www/phpunit.xml']
