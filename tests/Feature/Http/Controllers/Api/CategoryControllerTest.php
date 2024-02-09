@@ -4,10 +4,7 @@ namespace Tests\Feature\Http\Controllers\Api;
 
 use App\Models\Category;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestResponse;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Lang;
 use Tests\TestCase;
 
 class CategoryControllerTest extends TestCase
