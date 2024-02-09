@@ -3,11 +3,13 @@
 namespace Tests\Feature\Http\Controllers\Api;
 
 use App\Models\Genre;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestResponse;
 use Tests\TestCase;
 
 class GenreControllerTest extends TestCase
 {
+    use DatabaseMigrations;
     /**
      * A basic feature test example.
      *

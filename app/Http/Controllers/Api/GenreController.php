@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
 use App\Models\Genre;
 use Illuminate\Http\Request;
 
@@ -18,7 +17,7 @@ class GenreController extends Controller
     public function index(Request $request)
     {
         if($request->has('only_trashed')){
-            return Category::onlyTrashed()->get();
+            return Genre::onlyTrashed()->get();
         }
 
         return Genre::all();
@@ -28,8 +27,9 @@ class GenreController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,$this->rules);
-
-        return Genre::create($request->all());
+        $genre = Genre::create($request->all());
+        $genre->refresh();
+        return $genre;
     }
 
     public function show(Genre $genre)
