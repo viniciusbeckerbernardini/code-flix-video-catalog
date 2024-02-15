@@ -160,6 +160,16 @@ class GenreControllerTest extends TestCase
             ->assertStatus(200)
             ->assertJson($genre->toArray())
             ->assertJsonFragment(['name' => 'testUpdate2']);
+    }
 
+    public function testDelete()
+    {
+        $genre = factory(Genre::class)->create([
+            'is_active'=>false
+        ]);
+        $response = $this->json('DELETE',route('api.genres.destroy',['genre'=>$genre->id]));
+        $response
+            ->assertStatus(204)
+            ->assertNoContent();
     }
 }
