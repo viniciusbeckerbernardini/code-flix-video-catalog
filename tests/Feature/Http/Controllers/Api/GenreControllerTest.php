@@ -171,5 +171,7 @@ class GenreControllerTest extends TestCase
         $response
             ->assertStatus(204)
             ->assertNoContent();
+        $this->assertEmpty(Genre::find($genre)->toArray());
+        $this->assertNotNull(Genre::withTrashed()->find($genre));
     }
 }
