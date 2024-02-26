@@ -6,9 +6,11 @@ use App\Models\Category;
 use App\Models\Traits\Uuid;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use PHPUnit\Framework\TestCase;
+use Tests\Traits\TestDates;
 
 class CategoryTest extends TestCase
 {
+    use TestDates;
     private $category;
 
     public static function setUpBeforeClass(): void
@@ -27,6 +29,10 @@ class CategoryTest extends TestCase
         $this->category = new Category();
     }
 
+    public function getModel()
+    {
+        return $this->category;
+    }
 
     public function testFillable()
     {
@@ -60,14 +66,5 @@ class CategoryTest extends TestCase
     public function testIncrementing()
     {
         $this->assertFalse($this->category->incrementing);
-    }
-
-    public function testDatesAttribute()
-    {
-        $dates = ['created_at','updated_at','deleted_at'];
-        foreach ($dates as $date){
-            $this->assertContains($date, $this->category->getDates());
-        }
-        $this->assertCount(count($dates),$this->category->getDates());
     }
 }

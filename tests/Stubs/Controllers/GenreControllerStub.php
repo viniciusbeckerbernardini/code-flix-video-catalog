@@ -3,28 +3,25 @@
 namespace Tests\Stubs\Controllers;
 
 use App\Http\Controllers\Api\BasicCrudController;
-use Tests\Stubs\Models\CategoryStub;
 
-class CategoryControllerStub extends BasicCrudController
+class GenreControllerStub extends BasicCrudController
 {
     protected function model()
     {
-        return CategoryStub::class;
+        return GenreControllerStub::class;
     }
 
     protected function rulesStore(): array
     {
         return [
-            'name' => 'required|max:255',
-            'description' => 'nullable'
+            'name' => 'required|max:255'
         ];
     }
 
     protected function rulesUpdate(): array
     {
         return [
-            'name' => 'required|max:255',
-            'description' => 'nullable'
+            'name' => 'required|max:255'
         ];
     }
 }

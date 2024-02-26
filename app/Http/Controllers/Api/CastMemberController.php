@@ -3,20 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
+use App\Models\CastMember;
 use Illuminate\Http\Request;
 
-class CategoryController extends BasicCrudController
+class CastMemberController extends BasicCrudController
 {
     private $rules = [
         'name' => 'required|max:255',
-        'description'=>'nullable',
-        'is_active' => 'boolean'
+        'type' => 'int'
     ];
 
     protected function model()
     {
-        return Category::class;
+        return CastMember::class;
     }
 
     protected function rulesStore(): array
@@ -28,4 +27,5 @@ class CategoryController extends BasicCrudController
     {
         return $this->rules;
     }
+
 }

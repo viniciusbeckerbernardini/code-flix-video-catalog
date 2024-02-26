@@ -6,13 +6,20 @@ use App\Models\Genre;
 use App\Models\Traits\Uuid;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use PHPUnit\Framework\TestCase;
+use Tests\Traits\TestDates;
 
 class GenreTest extends TestCase
 {
+    use TestDates;
     protected function setUp(): void
     {
         parent::setUp();
         $this->genre = new Genre();
+    }
+
+    public function getModel()
+    {
+        return $this->genre;
     }
 
     public function testFillable()

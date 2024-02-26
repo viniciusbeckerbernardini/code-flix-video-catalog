@@ -13,6 +13,8 @@ abstract class BasicCrudController extends Controller
 
     protected abstract function rulesStore():array;
 
+    protected abstract function rulesUpdate():array;
+
     public function index()
     {
         return $this->model()::all();
@@ -20,28 +22,38 @@ abstract class BasicCrudController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request,$this->rulesStore());
+        $validatedData = $this->validate($request,$this->rulesStore());
 
-        $model = $this->model()::create($request->all());
+        $model = $this->model()::create($validatedData);
         $model->refresh();
         return $model;
     }
 
     public function show(Model $model)
     {
-        return $model;
+        return $this->findOrFail($model->id);
     }
 
     public function update(Request $request, Model $model)
     {
-        $this->validate($request,$this->rules);
-        $model->update($request->all());
-        return $model;
+        $obj = $this->findOrFail($model->id);
+        $validatedData = $this->validate($request,$this->rulesUpdate());
+        $obj->update($validatedData);
+        $obj->refresh();
+        return $obj;
     }
 
     public function destroy(Model $model)
     {
-        $model->delete();
+        $obj = $this->findOrFail($model->id);
+        $obj->delete();
         return response()->noContent(); // 204 - No content
+    }
+
+    protected function findOrFail($id)
+    {
+        $model = $this->model();
+        $keyName = (new $model)->getRouteKeyName();
+        return $this->model()::where($keyName,$id)->firstOrFail();
     }
 }
