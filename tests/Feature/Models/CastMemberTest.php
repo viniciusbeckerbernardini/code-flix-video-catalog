@@ -3,10 +3,14 @@
 namespace Tests\Feature\Models;
 
 use App\Models\CastMember;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 
 class CastMemberTest extends TestCase
 {
+    use DatabaseMigrations;
+
     public function testList()
     {
         factory(CastMember::class,1)->create();
@@ -37,7 +41,7 @@ class CastMemberTest extends TestCase
         $castMember->refresh();
 
         $this->assertEquals('test1',$castMember->name);
-        $this->assertEquals(1,$castMember->name);
+        $this->assertEquals(1,$castMember->type);
     }
 
     public function testUpdateCastMember()
