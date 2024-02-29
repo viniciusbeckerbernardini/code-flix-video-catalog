@@ -43,6 +43,7 @@ class CategoryControllerTest extends TestCase
         $data = [
             'name'=> ''
         ];
+
         $this->assertInvalidationInStoreAction($data, 'required');
         $this->assertInvalidationInUpdateAction($data, 'required');
 
@@ -59,6 +60,7 @@ class CategoryControllerTest extends TestCase
         $this->assertInvalidationInUpdateAction($data, 'boolean');
 
     }
+
     public function testStore()
     {
         $data = [
