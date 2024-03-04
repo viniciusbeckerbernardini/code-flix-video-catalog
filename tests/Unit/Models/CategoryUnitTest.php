@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use PHPUnit\Framework\TestCase;
 use Tests\Traits\TestDates;
 
-class CategoryTest extends TestCase
+class CategoryUnitTest extends TestCase
 {
     use TestDates;
     private $category;

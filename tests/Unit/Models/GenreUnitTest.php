@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use PHPUnit\Framework\TestCase;
 use Tests\Traits\TestDates;
 
-class GenreTest extends TestCase
+class GenreUnitTest extends TestCase
 {
     use TestDates;
     protected function setUp(): void

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Tests\TestCase;
 use Tests\Traits\TestDates;
 
-class CastMemberTest extends TestCase
+class CastMemberUnitTest extends TestCase
 {
     use TestDates;
 
