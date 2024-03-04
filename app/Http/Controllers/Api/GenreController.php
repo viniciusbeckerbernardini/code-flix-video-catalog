@@ -9,11 +9,15 @@ use Illuminate\Http\Request;
 class GenreController extends BasicCrudController
 {
 
-    private $rules = [
-        'name' => 'required|max:255',
-        'is_active' => 'boolean'
-    ];
+    private $rules;
 
+    public function __construct()
+    {
+        $this->rules = [
+            'name' => 'required|max:255',
+            'is_active' => 'boolean'
+        ];
+    }
 
     protected function model()
     {
