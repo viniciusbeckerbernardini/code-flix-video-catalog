@@ -2,10 +2,13 @@
 
 namespace Feature\Http\Controllers\Api;
 
+use App\Http\Controllers\Api\VideoController;
 use App\Models\Category;
 use App\Models\Genre;
 use App\Models\Video;
+use Exceptions\TestException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Http\Request;
 use Tests\TestCase;
 use Tests\Traits\TestSaves;
 use Tests\Traits\TestValidations;
@@ -181,6 +184,35 @@ class VideoControllerTest extends TestCase
             ]);
         }
 
+    }
+
+    public function testRollbackStore(){
+        $controller = \Mockery::mock(VideoController::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+
+        $controller
+            ->shouldReceive('rulesStore')
+            ->withAnyArgs()
+            ->andReturn([]);
+
+        $controller
+            ->shouldReceive('validate')
+            ->withAnyArgs()
+            ->andReturn($this->sendData);
+
+        $request = \Mockery::mock(Request::class);
+
+        $controller->shouldReceive('handleRelations')
+            ->once()
+            // Verify why didint get TestException
+            ->andThrow(new \Exception());
+
+        try {
+            $controller->store($request);
+        }catch (\Exception $exception){
+            $this->assertCount(1, Video::all());
+        }
     }
 
     public function testDelete()

@@ -4,6 +4,18 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Video;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+/*
+ * Auto commit - Padrão dos bd relacionais
+ * Modo transação
+ *  - begin transaction
+ *  - transactions
+ *  - commit - persists the data
+ *  - rollback - cancel the transactions
+ *  - savepoint - save a specific state to retry if you want (most used in dbms)
+ */
+
 
 class VideoController extends BasicCrudController
 {
@@ -39,17 +51,25 @@ class VideoController extends BasicCrudController
         return $this->rules;
     }
 
+    public function index()
+    {
+        //Eager loading
+        /*
+        $video = new Video();
+        return $video->with('categories','genres')->get();
+        */
+        return parent::index();
+    }
+
     public function store(Request $request)
     {
         $validatedData = $this->validate($request,$this->rulesStore());
-
-        $obj = $this->model()::create($validatedData);
-        // Attach to relate models many to many
-        //$obj->categories()->attatch();
-        // Dettach to remove related models many to many
-        //$obj->categories()->dettach();
-        $obj->categories()->sync($request->get('categories_id'));
-        $obj->genres()->sync($request->get('genres_id'));
+        $self = $this;
+        $obj = DB::transaction(function () use ($request, $validatedData, $self){
+            $obj = $this->model()::create($validatedData);
+            $self->handleRelations($obj,$request);
+            return $obj;
+        });
         $obj->refresh();
         return $obj;
     }
@@ -58,10 +78,23 @@ class VideoController extends BasicCrudController
     {
         $obj = $this->findOrFail($id);
         $validatedData = $this->validate($request,$this->rulesUpdate());
-        $obj->update($validatedData);
-        $obj->categories()->sync($request->get('categories_id'));
-        $obj->genres()->sync($request->get('genres_id'));
+        $self = $this;
+        $obj = DB::transaction(function () use ($request, $validatedData, $self, $obj){
+            $obj->update($validatedData);
+            $self->handleRelations($obj,$request);
+            return $obj;
+        });
         return $obj;
+    }
+
+    protected function handleRelations($video, Request $request)
+    {
+        // Attach to relate models many to many
+        //$obj->categories()->attatch();
+        // Dettach to remove related models many to many
+        //$obj->categories()->dettach();
+        $video->categories()->sync($request->get('categories_id'));
+        $video->genres()->sync($request->get('genres_id'));
     }
 
 
