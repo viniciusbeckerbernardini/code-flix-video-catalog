@@ -2,6 +2,8 @@
 
 namespace Feature\Http\Controllers\Api;
 
+use App\Models\Category;
+use App\Models\Genre;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
@@ -20,6 +22,8 @@ class VideoControllerTest extends TestCase
     {
         parent::setUp();
         $this->video = factory(Video::class)->create();
+        $category = factory(Category::class)->create();
+        $genre = factory(Genre::class)->create();
         $this->sendData = [
             'title'=>'title',
             'description'=>'description',
@@ -54,10 +58,42 @@ class VideoControllerTest extends TestCase
             'description' => '',
             'year_launched' => '',
             'rating' => '',
-            'duration' => ''
+            'duration' => '',
+            'categories_id' => '',
+            'genres_id' => ''
         ];
         $this->assertInvalidationInStoreAction($data, 'required');
         $this->assertInvalidationInUpdateAction($data, 'required');
+    }
+
+    public function testInvalidationCategoriesField()
+    {
+        $data = [
+            'categories_id' => 'a'
+        ];
+        $this->assertInvalidationInStoreAction($data, 'array');
+        $this->assertInvalidationInUpdateAction($data, 'array');
+
+        $data = [
+            'categories_id' => [100]
+        ];
+        $this->assertInvalidationInStoreAction($data, 'exists');
+        $this->assertInvalidationInUpdateAction($data, 'exists');
+    }
+
+    public function testInvalidationGenresIdField()
+    {
+        $data = [
+            'genres_id' => 'a'
+        ];
+        $this->assertInvalidationInStoreAction($data, 'array');
+        $this->assertInvalidationInUpdateAction($data, 'array');
+
+        $data = [
+            'genres_id' => [100]
+        ];
+        $this->assertInvalidationInStoreAction($data, 'exists');
+        $this->assertInvalidationInUpdateAction($data, 'exists');
     }
 
     public function testInvalidationMax()
@@ -108,17 +144,20 @@ class VideoControllerTest extends TestCase
     }
     public function testSave()
     {
+        $category = factory(Category::class)->create();
+        $genre = factory(Genre::class)->create();
+
         $data = [
             [
-                'send_data'=>$this->sendData,
+                'send_data'=>$this->sendData + ['categories_id'=>[$category->id],'genres_id'=>[$genre->id]],
                 'test_data'=>$this->sendData+ ['opened' => false]
             ],
             [
-                'send_data'=>$this->sendData + ['opened' => true],
+                'send_data'=>$this->sendData + ['categories_id'=>[$category->id],'genres_id'=>[$genre->id],'opened' => true],
                 'test_data'=>$this->sendData+ ['opened' => true]
             ],
             [
-                'send_data'=> $this->sendData + ['rating' => Video::RATING_LIST[1]],
+                'send_data'=> $this->sendData + ['categories_id'=>[$category->id],'genres_id'=>[$genre->id],'rating' => Video::RATING_LIST[1]],
                 'test_data'=> $this->sendData + ['rating' => Video::RATING_LIST[1]]
             ],
         ];
