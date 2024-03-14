@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Traits\Uuid;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Video extends Model
@@ -42,12 +43,12 @@ class Video extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    public function categories()
+    public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class);
     }
 
-    public function genres()
+    public function genres(): BelongsToMany
     {
         return $this->belongsToMany(Genre::class);
     }

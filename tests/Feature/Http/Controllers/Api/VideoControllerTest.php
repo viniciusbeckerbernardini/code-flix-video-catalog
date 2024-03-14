@@ -188,8 +188,8 @@ class VideoControllerTest extends TestCase
 
     public function testRollbackStore(){
         $controller = \Mockery::mock(VideoController::class)
-            ->makePartial()
-            ->shouldAllowMockingProtectedMethods();
+            ->makePartial();
+        $controller->shouldAllowMockingProtectedMethods();
 
         $controller
             ->shouldReceive('rulesStore')
