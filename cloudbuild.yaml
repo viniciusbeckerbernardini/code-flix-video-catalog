@@ -5,6 +5,10 @@ steps:
     name: 'gcr.io/$PROJECT_ID/docker-compose'
     args: ['-f', 'docker-compose.prod.yaml', 'up', '-d','--build']
 
+  - id: "Step 001 - chown in /var/www"
+    name: 'docker'
+    args: ['logs','micro-videos-app']
+
   - id: "Step 01 - chown in /var/www"
     name: 'docker'
     args: ['exec','-u','root','-t','micro-videos-app','chown','-R','www-data:www-data','/var/www']
