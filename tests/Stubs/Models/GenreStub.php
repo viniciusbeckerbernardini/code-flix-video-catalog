@@ -2,10 +2,11 @@
 
 namespace Tests\Stubs\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class GenreStub
+class GenreStub extends Model
 {
     protected $table = 'genres_stubs';
     protected $fillable = [
@@ -15,7 +16,7 @@ class GenreStub
 
     public static function createTable()
     {
-        Schema::create('categories_stubs', function (Blueprint $table) {
+        Schema::create('genres_stubs', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
             $table->text('is_active')->default(true);
@@ -25,6 +26,6 @@ class GenreStub
 
     public static function dropTable()
     {
-        Schema::dropIfExists('categories_stubs');
+        Schema::dropIfExists('genres_stubs');
     }
 }

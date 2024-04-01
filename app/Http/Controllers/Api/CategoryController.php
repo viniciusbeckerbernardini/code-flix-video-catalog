@@ -15,7 +15,8 @@ class CategoryController extends BasicCrudController
         $this->rules = [
             'name' => 'required|max:255',
             'description'=> 'nullable',
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
+            'genres_id' => 'required|array|exists:genres,id'
         ];
     }
 
@@ -32,5 +33,11 @@ class CategoryController extends BasicCrudController
     protected function rulesUpdate(): array
     {
         return $this->rules;
+    }
+
+    public function index()
+    {
+        $category = new Category();
+        return $category->with('genres')->get();
     }
 }

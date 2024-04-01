@@ -94,9 +94,7 @@ class VideoUnitTest extends TestCase
             }
         }
         $methods = array_diff($methods,self::TRAITS_METHODS);
-        print_r($methods);
         foreach ($methods as $method){
-            var_dump($method);
             $methodReturn = $videoReflection->getMethod($method)->getReturnType()->getName();
             if($methodReturn === 'Illuminate\Database\Eloquent\Relations\BelongsToMany'){
                 $this->assertContains($method,$relationshipsBelongsToMany);

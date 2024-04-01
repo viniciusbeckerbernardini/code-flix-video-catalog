@@ -25,14 +25,14 @@ class VideoControllerTest extends TestCase
     {
         parent::setUp();
         $this->video = factory(Video::class)->create();
-        $category = factory(Category::class)->create();
-        $genre = factory(Genre::class)->create();
+        factory(Category::class)->create();
+        factory(Genre::class)->create();
         $this->sendData = [
             'title'=>'title',
             'description'=>'description',
             'year_launched'=>2010,
             'rating'=>Video::RATING_LIST[0],
-            'duration'=>90
+            'duration'=>90,
         ];
     }
 
@@ -156,7 +156,7 @@ class VideoControllerTest extends TestCase
                 'test_data'=>$this->sendData+ ['opened' => false]
             ],
             [
-                'send_data'=>$this->sendData + ['categories_id'=>[$category->id],'genres_id'=>[$genre->id],'opened' => true],
+                'send_data'=>$this->sendData + ['categories_id'=>[$category->id],'genres_id'=>[$genre->id],'opened' => 1],
                 'test_data'=>$this->sendData+ ['opened' => true]
             ],
             [
