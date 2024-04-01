@@ -149,22 +149,23 @@ class VideoControllerTest extends TestCase
     {
         $category = factory(Category::class)->create();
         $genre = factory(Genre::class)->create();
+        $category->genres()->attach($genre->id);
 
         $data = [
             [
                 'send_data'=>$this->sendData + ['categories_id'=>[$category->id],'genres_id'=>[$genre->id]],
-                'test_data'=>$this->sendData+ ['opened' => false]
+                'test_data'=>$this->sendData
             ],
             [
-                'send_data'=>$this->sendData + ['categories_id'=>[$category->id],'genres_id'=>[$genre->id],'opened' => 1],
-                'test_data'=>$this->sendData+ ['opened' => true]
+                'send_data'=>$this->sendData + ['categories_id'=>[$category->id],'genres_id'=>[$genre->id],'opened' => true],
+                'test_data'=>$this->sendData
             ],
             [
                 'send_data'=> $this->sendData + ['categories_id'=>[$category->id],'genres_id'=>[$genre->id],'rating' => Video::RATING_LIST[1]],
                 'test_data'=> $this->sendData + ['rating' => Video::RATING_LIST[1]]
             ],
         ];
-        foreach ($data as $k => $v){
+        foreach ($data as $v){
             $response = $this->assertStore(
                 $v['send_data'],
                 $v['test_data'] + ['deleted_at'=>null]
