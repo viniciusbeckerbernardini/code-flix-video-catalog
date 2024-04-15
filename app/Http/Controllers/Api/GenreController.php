@@ -17,7 +17,7 @@ class GenreController extends BasicCrudController
         $this->rules = [
             'name' => 'required|max:255',
             'is_active' => 'boolean',
-            'categories_id' => 'required|array|exists:categories,id',
+            'categories_id' => 'required|array|exists:categories,id,deleted_at,NULL',
         ];
     }
 
@@ -55,13 +55,27 @@ class GenreController extends BasicCrudController
         return $obj;
     }
 
-    protected function handleRelations($video, Request $request)
+    public function update(Request $request, $id)
+    {
+        $obj = $this->findOrFail($id);
+        $validatedData = $this->validate($request,$this->rulesStore());
+        $self = $this;
+        $obj = DB::transaction(function () use ($request, $validatedData, $self, $obj){
+            $obj->update($validatedData);
+            $self->handleRelations($obj,$request);
+            return $obj;
+        });
+        $obj->refresh();
+        return $obj;
+    }
+
+    protected function handleRelations($genre, Request $request)
     {
         // Attach to relate models many to many
         //$obj->categories()->attatch();
         // Dettach to remove related models many to many
         //$obj->categories()->dettach();
-        $video->categories()->sync($request->get('categories_id'));
+        $genre->categories()->sync($request->get('categories_id'));
     }
     public function show(string $id)
     {

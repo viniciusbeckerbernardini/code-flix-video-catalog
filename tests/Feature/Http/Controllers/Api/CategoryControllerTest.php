@@ -123,6 +123,51 @@ class CategoryControllerTest extends TestCase
         $this->assertNotNull(Category::withoutTrashed()->find($this->category));
     }
 
+    public function testSyncGenres()
+    {
+        $genresIds = factory(Genre::class,3)->create()->pluck('id')->toArray();
+
+        $sendData = [
+            'name'=>'test',
+            'genres_id'=>[$genresIds[0]]
+        ];
+
+        $response = $this->json('POST',$this->routeStore(),$sendData);
+
+        $this->assertDatabaseHas('category_genre',
+            [
+                'category_id'=>$response->json('id'),
+                'genre_id'=>$genresIds[0]
+            ]);
+
+        $sendData = [
+            'name'=>'test',
+            'genres_id'=>[$genresIds[1],$genresIds[2]]
+        ];
+
+        $response = $this->json(
+            'PUT',
+            route('api.categories.update', ['category'=>$response->json('id')]),
+            $sendData
+        );
+        $this->assertDatabaseMissing('category_genre',[
+            'category_id'=>$response->json('id'),
+            'genre_id'=>$genresIds[0],
+        ]);
+
+        $this->assertDatabaseHas('category_genre',[
+            'category_id'=>$response->json('id'),
+            'genre_id'=>$genresIds[1],
+        ]);
+
+        $this->assertDatabaseHas('category_genre',[
+            'category_id'=>$response->json('id'),
+            'genre_id'=>$genresIds[2],
+        ]);
+
+    }
+
+
     public function routeStore()
     {
         return route('api.categories.store');

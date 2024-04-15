@@ -3,11 +3,7 @@ steps:
   - id: "Step 00 - Realizando docker-compose up"
     #Imagem que o CI service vai chamar, $PROJECT_ID é o project id do GCP
     name: 'gcr.io/$PROJECT_ID/docker-compose'
-    args: ['-f', 'docker-compose.prod.yaml', 'up', '-d','--build']
-
-  - id: "Step 001 - chown in /var/www"
-    name: 'docker'
-    args: ['logs','micro-videos-app']
+    args: ['-f', 'docker-compose.prod.yaml', 'up', '-d']
 
   - id: "Step 01 - chown in /var/www"
     name: 'docker'

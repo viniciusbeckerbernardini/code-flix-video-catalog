@@ -63,6 +63,29 @@ class GenreControllerTest extends TestCase
         $this->assertInvalidationInStoreAction($data, 'boolean');
         $this->assertInvalidationInUpdateAction($data, 'boolean');
 
+        $data =   [
+            'categories_id'=>'a'
+        ];
+
+        $this->assertInvalidationInStoreAction($data, 'array');
+        $this->assertInvalidationInUpdateAction($data, 'array');
+
+        $data =   [
+            'categories_id'=>[100]
+        ];
+
+        $this->assertInvalidationInStoreAction($data, 'exists');
+        $this->assertInvalidationInUpdateAction($data, 'exists');
+
+        $category = factory(Category::class)->create();
+        $category->delete();
+
+        $data =   [
+            'categories_id'=>[$category->id]
+        ];
+
+        $this->assertInvalidationInStoreAction($data, 'exists');
+        $this->assertInvalidationInUpdateAction($data, 'exists');
     }
 
 
@@ -105,7 +128,7 @@ class GenreControllerTest extends TestCase
             'is_active'=>false
         ];
 
-        $response = $this->assertUpdate($data + ['categories_id'=>[$this->category->get('id')]], $data + ['deleted_at'=>null]);
+        $response = $this->assertUpdate($data + ['categories_id'=>[$this->category->id]], $data + ['deleted_at'=>null]);
 
         $response->assertJsonStructure([
             'created_at',
@@ -117,7 +140,7 @@ class GenreControllerTest extends TestCase
             'is_active' => true
         ];
 
-        $response = $this->assertUpdate($data + ['categories_id'=>[$this->category->get('id')]], array_merge($data));
+        $response = $this->assertUpdate($data + ['categories_id'=>[$this->category->id]], array_merge($data));
         $response->assertJsonStructure([
             'created_at',
             'updated_at'
@@ -137,6 +160,50 @@ class GenreControllerTest extends TestCase
     public function routeStore()
     {
         return route('api.genres.store');
+    }
+
+    public function testSyncCategories()
+    {
+        $categoriesId = factory(Category::class,3)->create()->pluck('id')->toArray();
+
+        $sendData = [
+            'name'=>'test',
+            'categories_id'=>[$categoriesId[0]]
+        ];
+
+        $response = $this->json('POST',$this->routeStore(),$sendData);
+
+        $this->assertDatabaseHas('category_genre',
+        [
+           'category_id'=>$categoriesId[0],
+           'genre_id'=>$response->json('id')
+        ]);
+
+        $sendData = [
+            'name'=>'test',
+            'categories_id'=>[$categoriesId[1],$categoriesId[2]]
+        ];
+
+        $response = $this->json(
+            'PUT',
+            route('api.genres.update', ['genre'=>$response->json('id')]),
+            $sendData);
+
+        $this->assertDatabaseMissing('category_genre',[
+            'genre_id'=>$response->json('id'),
+            'category_id'=>$categoriesId[0],
+        ]);
+
+        $this->assertDatabaseHas('category_genre',[
+            'genre_id'=>$response->json('id'),
+            'category_id'=>$categoriesId[1]
+        ]);
+
+        $this->assertDatabaseHas('category_genre',[
+            'genre_id'=>$response->json('id'),
+            'category_id'=>$categoriesId[2]
+        ]);
+
     }
 
     public function routeUpdate()
