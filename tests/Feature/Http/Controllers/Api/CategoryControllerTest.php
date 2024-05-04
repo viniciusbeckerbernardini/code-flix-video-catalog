@@ -68,7 +68,7 @@ class CategoryControllerTest extends TestCase
         $data = [
             'name'=>'test'
         ];
-        $response = $this->assertStore($data + ['genres_id'=>[$this->genre->get('id')]],$data + ['description' => null, 'is_active' => true, 'deleted_at'=>null]);
+        $response = $this->assertStore($data + ['genres_id'=>[$this->genre->id]],$data + ['description' => null, 'is_active' => true, 'deleted_at'=>null]);
         $response->assertJsonStructure([
             'created_at',
             'updated_at'
@@ -78,7 +78,7 @@ class CategoryControllerTest extends TestCase
             'is_active'=>false,
             'description'=>'lorem'
         ];
-        $this->assertStore($data + ['genres_id'=>[$this->genre->get('id')]],$data + ['description' => 'lorem', 'is_active' => false, 'deleted_at'=>null]);
+        $this->assertStore($data + ['genres_id'=>[$this->genre->id]],$data + ['description' => 'lorem', 'is_active' => false, 'deleted_at'=>null]);
     }
 
     public function testUpdate()
@@ -88,7 +88,7 @@ class CategoryControllerTest extends TestCase
             'description' => 'ipsum',
             'is_active' => true
         ];
-        $response = $this->assertUpdate($data + ['genres_id'=>[$this->genre->get('id')]], $data + ['deleted_at'=>null]);
+        $response = $this->assertUpdate($data + ['genres_id'=>[$this->genre->id]], $data + ['deleted_at'=>null]);
         $response->assertJsonStructure([
             'created_at',
             'updated_at'
@@ -99,17 +99,17 @@ class CategoryControllerTest extends TestCase
             'description' => ''
         ];
 
-        $response = $this->assertUpdate($data + ['genres_id'=>[$this->genre->get('id')]], array_merge($data, ['description' => null]));
+        $response = $this->assertUpdate($data + ['genres_id'=>[$this->genre->id]], array_merge($data, ['description' => null]));
         $response->assertJsonStructure([
                 'created_at',
                 'updated_at'
         ]);
 
         $data['description'] = 'test';
-        $this->assertUpdate($data + ['genres_id'=>[$this->genre->get('id')]], array_merge($data, ['description' => 'test']));
+        $this->assertUpdate($data + ['genres_id'=>[$this->genre->id]], array_merge($data, ['description' => 'test']));
 
         $data['description'] = null;
-        $this->assertUpdate($data + ['genres_id'=>[$this->genre->get('id')]], array_merge($data, ['description' => null]));
+        $this->assertUpdate($data + ['genres_id'=>[$this->genre->id]], array_merge($data, ['description' => null]));
     }
 
     public function testDelete()
