@@ -146,5 +146,6 @@ return [
     */
 
     'attributes' => [],
+    'relation_between_video_and_genre_error' => 'The genre must be related with the category'
 
 ];

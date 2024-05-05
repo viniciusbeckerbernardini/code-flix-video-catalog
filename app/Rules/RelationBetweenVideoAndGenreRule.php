@@ -6,7 +6,7 @@ use App\Models\Category;
 use App\Models\Genre;
 use Illuminate\Contracts\Validation\Rule;
 
-class RelationBetweenVideoAndGenre implements Rule
+class RelationBetweenVideoAndGenreRule implements Rule
 {
     /**
      * Create a new rule instance.
@@ -34,6 +34,10 @@ class RelationBetweenVideoAndGenre implements Rule
             return false;
         }
 
+        return $this->verifyRelationBetweenVideoAndGenre($genresId, $categoriesId);
+    }
+
+    public function verifyRelationBetweenVideoAndGenre($genresId, $categoriesId){
         foreach ($genresId as $genreId){
             $genre = Genre::find($genreId);
             if(!$genre){
@@ -55,6 +59,6 @@ class RelationBetweenVideoAndGenre implements Rule
      */
     public function message()
     {
-        return 'Genêros e categorias são obrigatórios bem como a relação entre eles';
+        return trans('validation.relation_between_video_and_genre_error');
     }
 }

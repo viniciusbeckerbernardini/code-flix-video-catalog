@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Video;
-use App\Rules\RelationBetweenVideoAndGenre;
+use App\Rules\RelationBetweenVideoAndGenreRule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -32,8 +32,8 @@ class VideoController extends BasicCrudController
             'opened' => 'boolean',
             'rating' => 'required|in:'.implode(',',Video::RATING_LIST),
             'duration' => 'required|integer',
-            'categories_id' => ['required','array','exists:categories,id', new RelationBetweenVideoAndGenre],
-            'genres_id' => ['required','array','exists:genres,id', new RelationBetweenVideoAndGenre],
+            'categories_id' => ['required','array','exists:categories,id', new RelationBetweenVideoAndGenreRule],
+            'genres_id' => ['required','array','exists:genres,id', new RelationBetweenVideoAndGenreRule],
         ];
     }
 
