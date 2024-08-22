@@ -5,6 +5,7 @@ namespace Feature\Models;
 use App\Models\Category;
 use App\Models\Genre;
 use App\Models\Video;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
@@ -117,6 +118,47 @@ class VideoTest extends TestCase
     {
         $videoId = factory(Video::class)->create()->id;
         $this->assertTrue(\Ramsey\Uuid\Uuid::isValid($videoId));
+    }
+
+    public function testRollbackCreate(){
+        $hasError = false;
+        try {
+            Video::create(
+                [
+                    'title'=>'title',
+                    'description'=>'description',
+                    'year_launched'=>2010,
+                    'rating'=>Video::RATING_LIST[0],
+                    'duration'=>90,
+                    'categories_id'=>[0,1,2],
+                ]
+            );
+        }catch (QueryException $exception){
+            $this->assertCount(0,Video::all());
+            $hasError = true;
+        }
+        $this->assertTrue($hasError);
+    }
+
+    public function testRollbackUpdate(){
+        $video = factory(Video::class)->create();
+        $oldTitle = $video->title;
+        $videoUpdateAttributes =  [
+            'title'=>'title',
+            'description'=>'description',
+            'year_launched'=>2010,
+            'rating'=>Video::RATING_LIST[0],
+            'duration'=>90,
+            'categories_id'=>[0,1,2],
+        ];
+        $hasError = false;
+        try {
+            $video->update($videoUpdateAttributes);
+        }catch (QueryException $exception){
+            $this->assertDatabaseHas('videos',['title'=>$oldTitle]);
+            $hasError = true;
+        }
+        $this->assertTrue($hasError);
     }
 
 }

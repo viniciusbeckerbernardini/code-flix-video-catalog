@@ -44,6 +44,56 @@ class Video extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
+
+    public static function create(array $attributes = [])
+    {
+        try {
+            \DB::beginTransaction();
+            $obj =  static::query()->create($attributes);
+            static::handleRelations($obj, $attributes);
+            //Uploads
+
+            \DB::commit();
+            return $obj;
+        }catch (\Exception $e){
+            if(isset($obj)){
+                // Excluir arquivos de upload
+            }
+            \DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function update(array $attributes = [], array $options = [])
+    {
+
+        try {
+            \DB::beginTransaction();
+            $saved =  parent::update($attributes, $options);
+            static::handleRelations($this, $attributes);
+            if($saved){
+                //Uploads
+                // Upload dos novos arquivos e exclusão dos antigos
+            }
+            \DB::commit();
+            return $saved;
+        }catch (\Exception $e){
+            // Excluir arquivos de upload
+            \DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public static function handleRelations(Video $video, array $attributes = [])
+    {
+        if(isset($attributes['categories_id'])){
+            $video->categories()->sync($attributes['categories_id']);
+        }
+        if(isset($attributes['genres_id'])){
+            $video->genres()->sync($attributes['genres_id']);
+        }
+    }
+
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class)->withTrashed();

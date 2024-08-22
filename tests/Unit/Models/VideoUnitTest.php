@@ -26,7 +26,10 @@ class VideoUnitTest extends TestCase
         'restored',
         'isForceDeleting',
         'getDeletedAtColumn',
-        'getQualifiedDeletedAtColumn'
+        'getQualifiedDeletedAtColumn',
+        'create',
+        'update',
+        'handleRelations'
     ];
     protected function setUp(): void
     {

@@ -187,7 +187,14 @@ class VideoControllerTest extends TestCase
 
     }
 
+    /**
+     * @return void
+     * @deprecated Rollback tests are passed to model context
+     * @ignore
+     */
     public function testRollbackStore(){
+        $this->markTestSkipped('Rollback tests are passed to model context');
+
         $controller = \Mockery::mock(VideoController::class)
             ->makePartial();
         $controller->shouldAllowMockingProtectedMethods();
