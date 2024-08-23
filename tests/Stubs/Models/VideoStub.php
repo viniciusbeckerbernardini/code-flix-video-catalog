@@ -1,6 +1,7 @@
 <?php
 
-namespace Stubs\Models;
+namespace Tests\Stubs\Models;
+
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
