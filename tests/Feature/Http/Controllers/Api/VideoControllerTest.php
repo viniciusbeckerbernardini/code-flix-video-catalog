@@ -234,8 +234,15 @@ class VideoControllerTest extends TestCase
         $this->assertNotNull(Video::withoutTrashed()->find($this->video));
     }
 
+    /**
+     * @return void
+     * @deprecated Sync tests are passed to model context
+     * @ignore
+     */
     public function testSyncCategories()
     {
+        $this->markTestSkipped('Sync tests are passed to model context');
+
         $categoriesId = factory(Category::class,3)->create()->pluck('id')->toArray();
         $genre = factory(Genre::class)->create();
         $genre->categories()->sync($categoriesId);
@@ -287,8 +294,15 @@ class VideoControllerTest extends TestCase
 
     }
 
+    /**
+     * @return void
+     * @deprecated Sync tests are passed to model context
+     * @ignore
+     */
     public function testSyncGenres()
     {
+        $this->markTestSkipped('Sync tests are passed to model context');
+
         $genres = factory(Genre::class,3)->create();
         $genresId = $genres->pluck('id')->toArray();
         $categoryId = factory(Category::class)->create()->id;
