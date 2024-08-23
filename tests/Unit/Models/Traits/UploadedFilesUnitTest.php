@@ -1,16 +1,14 @@
 <?php
 
-namespace Models\Traits;
+namespace Tests\Unit\Models\Traits;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\TestCase;
 use Tests\Stubs\Models\UploadFilesStub;
-use Tests\Traits\TestDates;
 
 class UploadedFilesUnitTest extends TestCase
 {
-    use TestDates;
     private $uploadedFile;
 
     protected function setUp(): void
