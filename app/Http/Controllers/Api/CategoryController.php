@@ -44,6 +44,8 @@ class CategoryController extends BasicCrudController
 
     public function store(Request $request)
     {
+        //return false;
+
         $validatedData = $this->validate($request,$this->rulesStore());
         $self = $this;
         $obj = DB::transaction(function () use ($request, $validatedData, $self){

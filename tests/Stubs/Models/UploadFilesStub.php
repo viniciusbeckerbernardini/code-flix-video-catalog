@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class UploadFilesStub extends Model
 {
     use UploadFiles;
+    public static $fileFields = ['movie', 'trailer'];
+
 
     protected function uploadDir()
     {
