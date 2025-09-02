@@ -1,34 +1,58 @@
+# cloudbuild.yaml
+# Rodar com:
+# gcloud builds submit . --config=cloudbuild.yaml --no-cache
+
+options:
+  env:
+    - DOCKER_HOST=tcp://docker:2375
+    - DOCKER_DRIVER=overlay2
+  volumes:
+    - name: docker-graph-storage
+      path: /docker-graph-storage
+
 steps:
-  # Nome, descrição do que tu vai fazer
-  - id: "Step 00 - Realizando docker-compose up"
-    #Imagem que o CI service vai chamar, $PROJECT_ID é o project id do GCP
-    name: 'gcr.io/$PROJECT_ID/docker-compose'
-    args: ['-f', 'docker-compose.prod.yaml', 'up', '-d']
+  # Step 1: Sobe o Docker-in-Docker
+  - id: "Start Docker Daemon"
+    name: "docker:20.10-dind"
+    args: ["dockerd", "--host=tcp://0.0.0.0:2375"]
+    privileged: true
+    volumes:
+      - name: docker-graph-storage
+        path: /docker-graph-storage
 
-  - id: "Step 01 - chown in /var/www"
-    name: 'docker'
-    args: ['exec','-u','root','-t','micro-videos-app','chown','-R','www-data:www-data','/var/www']
+  # Step 2: Sobe containers com docker-compose
+  - id: "Docker Compose Up"
+    name: "docker/compose:1.28.2"
+    args: ["-f", "docker-compose.prod.yaml", "up", "-d"]
 
-  - id: 'Step 02 - Rodando composer install'
-    name: 'docker'
-    args: ['exec', '-t', 'micro-videos-app', 'composer', 'install']
+  # Step 3: Ajusta permissões
+  - id: "Chown /var/www"
+    name: "docker"
+    args: ["exec", "-u", "root", "-t", "micro-videos-app", "chown", "-R", "www-data:www-data", "/var/www"]
 
-  - id: 'Step 04 - Copiando .env'
-    name: 'docker'
-    args: ['exec', '-t', 'micro-videos-app', 'cp', '.env.example', '.env']
+  # Step 4: Composer install
+  - id: "Composer Install"
+    name: "docker"
+    args: ["exec", "-t", "micro-videos-app", "composer", "install"]
 
-  - id: 'Step 05 - Copiando .env.testing'
-    name: 'docker'
-    args: ['exec', '-t', 'micro-videos-app', 'cp', '.env.testing.example', '.env.testing']
+  # Step 5: Copiar arquivos .env
+  - id: "Copy envs"
+    name: "docker"
+    args: ["exec", "-t", "micro-videos-app", "bash", "-c", "cp .env.example .env && cp .env.testing.example .env.testing"]
 
-  - id: 'Step 06 - Key generate'
-    name: 'docker'
-    args: ['exec', '-t', 'micro-videos-app', 'php', '/var/www/artisan', 'key:generate']
+  # Step 6: Artisan key generate
+  - id: "Key Generate"
+    name: "docker"
+    args: ["exec", "-t", "micro-videos-app", "php", "/var/www/artisan", "key:generate"]
 
-  - id: 'Step 07 - Migrations'
-    name: 'docker'
-    args: ['exec', '-t', 'micro-videos-app', 'php', '/var/www/artisan', 'migrate']
+  # Step 7: Migrations
+  - id: "Migrate"
+    name: "docker"
+    args: ["exec", "-t", "micro-videos-app", "php", "/var/www/artisan", "migrate"]
 
-  - id: 'Step 08 - Executar'
-    name: 'docker'
-    args: ['exec', '-t', 'micro-videos-app', 'php', '/var/www/vendor/bin/phpunit', '-c', '/var/www/phpunit.xml']
+  # Step 8: PHPUnit
+  - id: "Run PHPUnit"
+    name: "docker"
+    args: ["exec", "-t", "micro-videos-app", "php", "/var/www/vendor/bin/phpunit", "-c", "/var/www/phpunit.xml"]
+
+tags: ['ci', 'laravel', 'docker-compose']
